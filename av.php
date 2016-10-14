@@ -21,9 +21,6 @@ class AV {
 	// Директория для отчетов, если null создается папка по-умолчанию av
 	private $reportsDir = null;
 
-	// Разделитель дерикториий \\ для Win,  / для unix
-	private $dirDelimiter = '/';
-
 	/////////////////////////////////////////////////////////////////////
 
 	private $oldResults, $curResults = array(), $report = array();
@@ -33,10 +30,10 @@ class AV {
 	private function AVcheckReportsDir() {
 		$dir = $this->reportsDir;
 		if($dir === null) {
-			$dir = __DIR__ . $this->dirDelimiter . 'av' . $dirDelimiter;
+			$dir = __DIR__ . DIRECTORY_SEPARATOR . 'av' . DIRECTORY_SEPARATOR;
 			$this->reportsDir = $dir;
 		}
-		$this->ignoreDirs[] = trim(trim($dir, '/'), '\\');
+		$this->ignoreDirs[] = rtrim($dir, DIRECTORY_SEPARATOR);
 		if(file_exists($dir) && is_writeable($dir))
 			return true;
 		elseif(!file_exists($dir))
@@ -58,7 +55,8 @@ class AV {
 			$scan = scandir($dir);
 			foreach($scan as $fileName) {
 				if($fileName != '.' && $fileName != '..') {
-					$this->scanDirProccess(trim($dir, $this->dirDelimiter) . $this->dirDelimiter . $fileName);
+					$path = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $fileName;
+					$this->scanDirProccess($path);
 				}
 			}
 		} 
